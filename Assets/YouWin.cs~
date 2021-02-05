@@ -1,0 +1,55 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+public class YouWin : MonoBehaviour
+{
+	public static YouWin instance;
+	//painel youwin
+	GameObject youwinUI,starsUI;
+	public GameObject star1UI,star2UI,star3UI;
+	public float tempo;
+	Button btnreload;
+
+	void Awake(){
+		if (instance == null) {
+			instance = this;
+		//	DontDestroyOnLoad (this.gameObject);
+		} else {
+			Destroy (gameObject);
+		}
+	}
+	void Start(){
+		youwinUI = GameObject.Find ("YouWin") as GameObject;
+		youwinUI.SetActive (false);
+		tempo = 2.0f;
+	}
+	public void Win(){
+		youwinUI.SetActive (true);
+		btnreload = GameObject.Find ("BtnReload").GetComponent<Button> ();
+		btnreload.GetComponent <Button>().interactable = false;
+		youwinUI.GetComponent<Animator> ().Play ("Pause");
+		tempo -= Time.deltaTime;
+		if (tempo <= 0) {
+			Star ();
+			tempo = 0;
+		}
+		Destroy (GameObject.Find ("BarataWall1(Clone)"));
+		Destroy (GameObject.Find ("BarataWall2(Clone)"));
+	}
+	void Star(){
+		starsUI = GameObject.Find ("Stars") as GameObject;
+		starsUI.GetComponent<Animator> ().Play ("Star");
+		Destroy (GameObject.Find ("BarataWall1(Clone)"));
+		Destroy (GameObject.Find ("BarataWall2(Clone)"));
+		Destroy (GameObject.Find ("GameManager(Clone)"));
+
+		StartCoroutine ( EnabledBtnReload());
+	}
+	IEnumerator EnabledBtnReload(){
+		yield return new WaitForSeconds (1f);
+		btnreload.GetComponent <Button>().interactable = true;
+		Destroy (GameObject.Find ("PontoManager"));
+	} 
+}
